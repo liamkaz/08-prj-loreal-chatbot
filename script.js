@@ -26,6 +26,8 @@ let conversationHistory = [
 
 // Track if user is at bottom of chat (for auto-scroll behavior)
 let userAtBottom = true;
+// Track if AI is currently responding (to disable input)
+let isAiResponding = false;
 
 /* Helper function to check if user is scrolled to bottom */
 function isUserAtBottom() {
@@ -384,15 +386,48 @@ function typeMessage(element, text, startIndex = 0) {
   }, TYPING_SPEED);
 }
 
+/* Helper function to disable user input while AI is responding */
+function disableUserInput() {
+  isAiResponding = true;
+  userInput.disabled = true;
+  userInput.placeholder = "AI is responding...";
+
+  // Get the send button and disable it
+  const sendBtn = document.getElementById("sendBtn");
+  sendBtn.disabled = true;
+}
+
+/* Helper function to enable user input when AI is done responding */
+function enableUserInput() {
+  isAiResponding = false;
+  userInput.disabled = false;
+  userInput.placeholder = "Ask me about products or routines…";
+
+  // Get the send button and enable it
+  const sendBtn = document.getElementById("sendBtn");
+  sendBtn.disabled = false;
+
+  // Focus back on the input for better user experience
+  userInput.focus();
+}
+
 /* Handle form submit */
 chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  // Don't allow new messages if AI is already responding
+  if (isAiResponding) {
+    return;
+  }
 
   // Get user input value
   const userMessage = userInput.value.trim();
 
   // Don't send empty messages
   if (!userMessage) return;
+
+  // Disable input while processing
+  disableUserInput();
 
   // Display user message in chat (show as separate black bubble)
   addMessage(userMessage, "user", false);
@@ -446,6 +481,13 @@ chatForm.addEventListener("submit", async (e) => {
 
     // Display AI response with user prompt above it and typewriter effect
     addMessage(aiResponse, "ai", true, currentUserMessage);
+
+    // Re-enable input after typewriter effect completes
+    // We'll add a delay to ensure typewriter effect finishes
+    const estimatedTypingTime = aiResponse.length * TYPING_SPEED + 1000; // Add 1 second buffer
+    setTimeout(() => {
+      enableUserInput();
+    }, estimatedTypingTime);
   } catch (error) {
     // Remove loading message
     chatWindow.removeChild(chatWindow.lastChild);
@@ -456,6 +498,9 @@ chatForm.addEventListener("submit", async (e) => {
       "ai",
       false
     );
+
+    // Re-enable input immediately on error
+    enableUserInput();
 
     // Log error for debugging
     console.error("Error calling Cloudflare Worker:", error);

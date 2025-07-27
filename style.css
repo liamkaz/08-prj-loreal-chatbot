@@ -146,6 +146,13 @@ body {
   outline-offset: 2px;
 }
 
+/* Disabled input styling */
+.chat-form input:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
 .chat-form button {
   font-size: 18px;
   background: #000;
@@ -159,6 +166,16 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: background 0.3s;
+}
+
+/* Disabled button styling */
+.chat-form button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.chat-form button:disabled:hover {
+  background: #ccc;
 }
 
 .chat-form button .material-icons {
