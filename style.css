@@ -24,6 +24,16 @@ body {
   padding-top: 50px;
 }
 
+/* Logo styling */
+.site-logo {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .site-title {
   font-size: 22px;
   font-weight: 500;
@@ -39,25 +49,82 @@ body {
   height: 360px;
   border: 1px solid #000;
   padding: 20px;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.5;
   overflow-y: auto;
   background: #fafafa;
   white-space: pre-line;
 }
 
-/* messages */
+/* chat bubble messages */
 .msg {
-  margin-bottom: 14px;
-  line-height: 1.5;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
 }
 
 .msg.user {
-  color: #000;
+  align-items: flex-end;
 }
 
 .msg.ai {
-  color: #666666;
+  align-items: flex-start;
+}
+
+/* sender labels */
+.sender-label {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  opacity: 0.7;
+}
+
+.msg.user .sender-label {
+  color: #000;
+}
+
+.msg.ai .sender-label {
+  color: #666;
+}
+
+.msg.user .bubble {
+  background: #000;
+  color: #fff;
+  border-radius: 18px 18px 4px 18px;
+  padding: 12px 16px;
+  max-width: 70%;
+  min-width: 0;
+  width: auto;
+  word-wrap: break-word;
+  display: inline-block;
+}
+
+.msg.ai .bubble {
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 18px 18px 18px 4px;
+  padding: 12px 16px;
+  max-width: 70%;
+  min-width: 0;
+  width: auto;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+/* Style for user prompt within AI response */
+.msg.ai .bubble strong {
+  color: #000;
+  font-weight: 600;
+}
+
+/* Styling for separate user prompt and AI response divs */
+.user-prompt {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
 }
 
 /* input row */
