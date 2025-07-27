@@ -28,6 +28,8 @@ let conversationHistory = [
 let userAtBottom = true;
 // Track if AI is currently responding (to disable input)
 let isAiResponding = false;
+// Track the loading animation interval
+let loadingAnimationInterval = null;
 
 /* Helper function to check if user is scrolled to bottom */
 function isUserAtBottom() {
@@ -76,7 +78,7 @@ function addMessage(content, sender, useTypewriter = false, userPrompt = null) {
     const promptDiv = document.createElement("div");
     promptDiv.className = "user-prompt";
     promptDiv.innerHTML = marked
-      .parse(`**Prompt:** ${userPrompt}`)
+      .parse(`**Question:** ${userPrompt}`)
       .replace(/^<p>|<\/p>\n?$/g, "");
 
     // Create div for AI response (will have typewriter effect)
@@ -386,6 +388,37 @@ function typeMessage(element, text, startIndex = 0) {
   }, TYPING_SPEED);
 }
 
+/* Function to animate loading dots */
+function animateLoadingDots(element) {
+  let dotCount = 1; // Start with 1 dot
+
+  // Update the loading text with current number of dots
+  function updateLoadingText() {
+    const dots = ".".repeat(dotCount); // Create string with current number of dots
+    element.textContent = `Thinking${dots}`;
+
+    // Increment dot count, reset to 1 after reaching 3
+    dotCount++;
+    if (dotCount > 3) {
+      dotCount = 1;
+    }
+  }
+
+  // Set initial text
+  updateLoadingText();
+
+  // Create interval to update dots every second (1000ms)
+  loadingAnimationInterval = setInterval(updateLoadingText, 1000);
+}
+
+/* Function to stop loading animation */
+function stopLoadingAnimation() {
+  if (loadingAnimationInterval) {
+    clearInterval(loadingAnimationInterval);
+    loadingAnimationInterval = null;
+  }
+}
+
 /* Helper function to disable user input while AI is responding */
 function disableUserInput() {
   isAiResponding = true;
@@ -444,8 +477,12 @@ chatForm.addEventListener("submit", async (e) => {
   // Clear input field
   userInput.value = "";
 
-  // Show loading message (no typewriter effect for loading)
-  addMessage("Thinking...", "ai", false);
+  // Show loading message with animated dots
+  addMessage("Thinking.", "ai", false);
+
+  // Get the loading message element and start animation
+  const loadingMessage = chatWindow.lastChild.querySelector(".bubble");
+  animateLoadingDots(loadingMessage);
 
   try {
     // Send the complete conversation history to maintain context
@@ -467,7 +504,8 @@ chatForm.addEventListener("submit", async (e) => {
     // Parse JSON response
     const data = await response.json();
 
-    // Remove loading message
+    // Stop loading animation and remove loading message
+    stopLoadingAnimation();
     chatWindow.removeChild(chatWindow.lastChild);
 
     // Get AI response from OpenAI format
@@ -489,7 +527,8 @@ chatForm.addEventListener("submit", async (e) => {
       enableUserInput();
     }, estimatedTypingTime);
   } catch (error) {
-    // Remove loading message
+    // Stop loading animation and remove loading message
+    stopLoadingAnimation();
     chatWindow.removeChild(chatWindow.lastChild);
 
     // Show error message to user (no typewriter effect for errors)

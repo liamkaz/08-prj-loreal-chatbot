@@ -120,6 +120,27 @@ body {
   font-weight: 600;
 }
 
+/* Styling for markdown lists within chat bubbles */
+.msg.ai .bubble ul,
+.msg.ai .bubble ol {
+  margin: 8px 0;
+  padding-left: 20px; /* Add proper indentation from left edge */
+}
+
+.msg.ai .bubble ul li,
+.msg.ai .bubble ol li {
+  margin-bottom: 4px; /* Add spacing between list items */
+}
+
+/* Ensure nested lists have additional indentation */
+.msg.ai .bubble ul ul,
+.msg.ai .bubble ol ol,
+.msg.ai .bubble ul ol,
+.msg.ai .bubble ol ul {
+  margin: 4px 0;
+  padding-left: 16px; /* Additional indent for nested lists */
+}
+
 /* Styling for separate user prompt and AI response divs */
 .user-prompt {
   margin-bottom: 12px;
